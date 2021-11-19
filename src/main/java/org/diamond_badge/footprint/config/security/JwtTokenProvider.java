@@ -75,6 +75,11 @@ public class JwtTokenProvider {
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 
+	public String getUserName(String token){
+		UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
+		return userDetails.getUsername();
+	}
+
 	// Jwt 토큰에서 회원 구별 정보 추출
 	public String getUserPk(String token) {
 		return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();

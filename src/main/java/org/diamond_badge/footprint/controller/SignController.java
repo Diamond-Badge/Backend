@@ -9,10 +9,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.diamond_badge.footprint.advice.exception.InvalidRefreshTokenException;
 import org.diamond_badge.footprint.advice.exception.NotExpiredTokenYetException;
 import org.diamond_badge.footprint.config.security.JwtTokenProvider;
+import org.diamond_badge.footprint.jpa.entity.ProviderType;
 import org.diamond_badge.footprint.jpa.entity.RoleType;
 import org.diamond_badge.footprint.jpa.entity.User;
 import org.diamond_badge.footprint.jpa.entity.UserRefreshToken;
 import org.diamond_badge.footprint.jpa.repo.UserRefreshTokenRepository;
+import org.diamond_badge.footprint.jpa.repo.UserRepository;
 import org.diamond_badge.footprint.model.SingleResult;
 import org.diamond_badge.footprint.model.social.RetKakaoAuth;
 import org.diamond_badge.footprint.model.social.RetNaverAuth;
@@ -24,6 +26,7 @@ import org.diamond_badge.footprint.util.CookieUtil;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,8 +51,19 @@ public class SignController {
 	private final KakaoService kakaoService;
 	private final NaverService naverService;
 	private final UserRefreshTokenRepository userRefreshTokenRepository;
+	private final UserRepository userRepository;
+
 	private final static long THREE_DAYS_MSEC = 259200000;
 	private final static String REFRESH_TOKEN = "refresh_token";
+
+	@ApiOperation(value = "운영자 로그인", notes = "운영자 계정을 통해 로그인한다.")
+	@PostMapping(value = "/signin")
+	public SingleResult<String> userlogin(
+		String id, String password) throws Throwable {
+
+		return responseService.getSingleResult(
+			jwtTokenProvider.createToken(id, RoleType.ADMIN));
+	}
 
 	@ApiOperation(value = "소셜 로그인", notes = " 소셜 회원 로그인을 한다.")
 	@PostMapping(value = "/signin/{provider}")
@@ -90,6 +104,8 @@ public class SignController {
 			jwtTokenProvider.createToken(String.valueOf(signedUser.getEmail()), signedUser.getRoleType()));
 
 	}
+
+
 
 	@ApiOperation(value="refreshToken 값 -> AccessToken 값",notes = "refreshToken 값을 이용해 AccessToken 값을 얻는다")
 	@GetMapping("/refresh")
