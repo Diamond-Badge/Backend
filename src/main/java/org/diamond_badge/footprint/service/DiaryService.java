@@ -34,7 +34,7 @@ public class DiaryService {
 	private final UserRepository userRepository;
 
 	//한달 단위 내 일기 불러오기
-	public List<Diary> findDiarysByMonth(String email,LocalDateTime dateTime){
+	public List<Diary> findDiarysByMonth(String email,LocalDate dateTime){
 		YearMonth yearMonth=YearMonth.from(dateTime);
 		LocalDateTime startDatetime = LocalDateTime.of(yearMonth.getYear(),yearMonth.getMonthValue(),1,0,0,0);
 		LocalDateTime endDatetime = LocalDateTime.of(yearMonth.atEndOfMonth(), LocalTime.of(23,59,59));
@@ -42,7 +42,7 @@ public class DiaryService {
 	}
 
 	//주 단위 내 일기 불러오기
-	public List<Diary> findDiarysByWeek(String email,LocalDateTime dateTime){
+	public List<Diary> findDiarysByWeek(String email,LocalDate dateTime){
 		DayOfWeek dayOfWeek= dateTime.getDayOfWeek();
 		int day=dayOfWeek.get(ChronoField.DAY_OF_WEEK);
 		LocalDateTime startDatetime = LocalDateTime.of(dateTime.minusDays(day-1).getYear(),dateTime.minusDays(day-1).getMonthValue(),dateTime.minusDays(day-1).getDayOfMonth(),0,0,0);
@@ -51,9 +51,9 @@ public class DiaryService {
 	}
 
 	//하루단위 내 일기 불러오기
-	public List<Diary> findDiarysByDay(String email,LocalDateTime dateTime){
-		LocalDateTime startDatetime = LocalDateTime.of(dateTime.toLocalDate(),LocalTime.of(0,0,0));
-		LocalDateTime endDatetime = LocalDateTime.of(dateTime.toLocalDate(),LocalTime.of(23,59,59));
+	public List<Diary> findDiarysByDay(String email,LocalDate dateTime){
+		LocalDateTime startDatetime = LocalDateTime.of(dateTime,LocalTime.of(0,0,0));
+		LocalDateTime endDatetime = LocalDateTime.of(dateTime,LocalTime.of(23,59,59));
 		return diaryRepository.findByCreatedAtBetweenAndUserEmail(startDatetime,endDatetime,email);
 	}
 	//전체조회(지도 전송 오전 6시부터 다음날 오전 6시까지)
