@@ -52,9 +52,11 @@ public class ResponseService {
 	}
 
 	// 실패 결과만 처리
-	public CommonResult getDefaultFailResult() {
+	public CommonResult getDefaultFailResult(String msg) {
 		CommonResult result = new CommonResult();
-		setFailResult(result);
+		result.setSuccess(false);
+		result.setCode(CommonResponse.FAIL.getCode());
+		result.setMsg(msg);
 		return result;
 	}
 
