@@ -1,7 +1,10 @@
 package org.diamond_badge.footprint.jpa.entity;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -86,6 +90,9 @@ public class Diary {
 	@JoinColumn(name="TIMELINE_SEQ")
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private TimeLine timeLine;
+
+	@OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
+	Set<Like> likes = new HashSet<>();
 
 	public Diary(String location,double latitude,double longtitude,LocalDateTime createdAt,LocalDateTime modifiedAt,String userName,String userEamil){
 		this.location=this.place=location;

@@ -9,11 +9,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.diamond_badge.footprint.advice.exception.InvalidRefreshTokenException;
 import org.diamond_badge.footprint.advice.exception.NotExpiredTokenYetException;
 import org.diamond_badge.footprint.config.security.JwtTokenProvider;
+
 import org.diamond_badge.footprint.jpa.entity.ProviderType;
 import org.diamond_badge.footprint.jpa.entity.RoleType;
 import org.diamond_badge.footprint.jpa.entity.User;
 import org.diamond_badge.footprint.jpa.entity.UserRefreshToken;
 import org.diamond_badge.footprint.jpa.repo.UserRefreshTokenRepository;
+
+
 import org.diamond_badge.footprint.jpa.repo.UserRepository;
 import org.diamond_badge.footprint.model.SingleResult;
 import org.diamond_badge.footprint.model.social.RetKakaoAuth;
@@ -104,7 +107,6 @@ public class SignController {
 			jwtTokenProvider.createToken(String.valueOf(signedUser.getEmail()), signedUser.getRoleType()));
 
 	}
-
 
 
 	@ApiOperation(value="refreshToken 값 -> AccessToken 값",notes = "refreshToken 값을 이용해 AccessToken 값을 얻는다")
