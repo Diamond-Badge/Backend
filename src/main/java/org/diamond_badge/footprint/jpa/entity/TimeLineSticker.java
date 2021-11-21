@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 
 @Getter
-@Table(name="TIMELINE_STICKER")
+@Table(name = "TIMELINE_STICKER")
 @Entity
 public class TimeLineSticker {
 	@JsonIgnore
@@ -20,10 +20,5 @@ public class TimeLineSticker {
 	@Column(name = "TIMELINE_STICKER_SEQ")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long timeLineStickerSeq;
-
-
-
-
-
 
 }

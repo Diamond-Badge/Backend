@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRefreshTokenRepository extends JpaRepository<UserRefreshToken, Long> {
 	UserRefreshToken findByUserEmail(String userEmail);
+
 	UserRefreshToken findByUserEmailAndRefreshToken(String userEmail, String refreshToken);
 }

@@ -22,8 +22,8 @@ public class ExceptionAdvice {
 
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	protected CommonResult defaultException(HttpServletRequest request,Exception e){
-		return responseService.getFailResult(500,"실패");
+	protected CommonResult defaultException(HttpServletRequest request, Exception e) {
+		return responseService.getFailResult(500, "실패");
 	}
 
 	@ExceptionHandler(UserNotFoundException.class)

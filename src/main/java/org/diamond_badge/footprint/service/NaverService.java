@@ -119,12 +119,13 @@ public class NaverService {
 		params.add("grant_type", "authorization_code");
 		params.add("client_id", naverClientId);
 		params.add("client_secret", naverClientSecret);
-		params.add("redirect_uri", baseUrl+naverRedirect);
+		params.add("redirect_uri", baseUrl + naverRedirect);
 		params.add("code", code);
 		params.add("state", "footprint");
 		// Set http entity
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-		ResponseEntity<String> response = restTemplate.postForEntity(env.getProperty("spring.social.provider.naver.tokenUri"),
+		ResponseEntity<String> response = restTemplate.postForEntity(
+			env.getProperty("spring.social.provider.naver.tokenUri"),
 			request, String.class);
 		System.out.println(response.getStatusCode());
 		if (response.getStatusCode() == HttpStatus.OK) {

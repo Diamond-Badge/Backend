@@ -16,7 +16,7 @@ public enum EmotionType {
 		}
 	}
 
-	public static class Values{
+	public static class Values {
 		public static final String DEFAULT = "DEFAULT";
 		public static final String EXCITED = "EXCITED";
 		public static final String HAPPY = "HAPPY";

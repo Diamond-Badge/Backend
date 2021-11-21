@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
-@Table(name="LIKES")
+@Table(name = "LIKES")
 @Entity
 public class Like {
 
@@ -28,15 +28,15 @@ public class Like {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long likeSeq;
 
-	@ManyToOne(fetch= FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Diary diary;
 
-	public Like(User user,Diary diary){
-		this.user=user;
-		this.diary=diary;
+	public Like(User user, Diary diary) {
+		this.user = user;
+		this.diary = diary;
 	}
 
 }

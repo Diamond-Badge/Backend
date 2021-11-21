@@ -7,8 +7,6 @@ import org.diamond_badge.footprint.model.ListResult;
 import org.diamond_badge.footprint.model.SingleResult;
 import org.springframework.stereotype.Service;
 
-
-
 @Service
 public class ResponseService {
 

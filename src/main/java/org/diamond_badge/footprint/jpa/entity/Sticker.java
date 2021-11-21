@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 
 @Getter
-@Table(name="STICKER")
+@Table(name = "STICKER")
 @Entity
 public class Sticker {
 	@JsonIgnore
@@ -20,9 +20,5 @@ public class Sticker {
 	@Column(name = "STICKER_SEQ")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long stickerSeq;
-
-
-
-
 
 }

@@ -17,10 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -52,26 +50,22 @@ public class TimeLine {
 	private LocalDateTime modifiedAt;
 
 	@OneToMany(mappedBy = "timeLine")
-	private List<Diary> diarys=new ArrayList<>();
+	private List<Diary> diarys = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="USER_SEQ")
+	@JoinColumn(name = "USER_SEQ")
 	private User user;
 
-	public TimeLine(EmotionType emotionType,LocalDateTime createdAt,User user){
-		this.emotionType=emotionType;
-		this.createdAt=this.modifiedAt=createdAt;
-		this.user=user;
+	public TimeLine(EmotionType emotionType, LocalDateTime createdAt, User user) {
+		this.emotionType = emotionType;
+		this.createdAt = this.modifiedAt = createdAt;
+		this.user = user;
 
 	}
 
 	public void newDiary(Diary diary) {
 		this.diarys.add(diary);
 
-
 	}
-
-
-
 
 }

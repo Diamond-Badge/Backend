@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -33,7 +34,6 @@ public class User {
 	@Column(name = "USER_SEQ")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userSeq;
-
 
 	@Column(name = "USERNAME", length = 100)
 	@NotNull
@@ -70,7 +70,7 @@ public class User {
 
 	@OneToMany(mappedBy = "user")
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private List<TimeLine> timeLines=new ArrayList<>();
+	private List<TimeLine> timeLines = new ArrayList<>();
 
 	public User(
 		@NotNull @Size(max = 100) String username,
@@ -90,15 +90,15 @@ public class User {
 		this.modifiedAt = modifiedAt;
 	}
 
-	public void setUsername(String username){
-		this.username=username;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
-	public void setProfileImageUrl(String profileImageUrl){
-		this.profileImageUrl=profileImageUrl;
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
 	}
 
-	public void addTimeLine(TimeLine timeLine){
+	public void addTimeLine(TimeLine timeLine) {
 		this.timeLines.add(timeLine);
 	}
 }
