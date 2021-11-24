@@ -1,6 +1,8 @@
 package org.diamond_badge.footprint.jpa.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,11 +11,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +34,6 @@ public class User {
 	@Column(name = "USER_SEQ")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userSeq;
-
 
 	@Column(name = "USERNAME", length = 100)
 	@NotNull
@@ -65,6 +68,10 @@ public class User {
 	@NotNull
 	private LocalDateTime modifiedAt;
 
+	@OneToMany(mappedBy = "user")
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	private List<TimeLine> timeLines = new ArrayList<>();
+
 	public User(
 		@NotNull @Size(max = 100) String username,
 		@NotNull @Size(max = 512) String email,
@@ -83,12 +90,16 @@ public class User {
 		this.modifiedAt = modifiedAt;
 	}
 
-	public void setUsername(String username){
-		this.username=username;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
-	public void setProfileImageUrl(String profileImageUrl){
-		this.profileImageUrl=profileImageUrl;
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
+
+	public void addTimeLine(TimeLine timeLine) {
+		this.timeLines.add(timeLine);
 	}
 }
 

@@ -1,6 +1,6 @@
 package org.diamond_badge.footprint.advice.exception;
 
-public class InvalidRefreshTokenException extends RuntimeException{
+public class InvalidRefreshTokenException extends RuntimeException {
 	public InvalidRefreshTokenException() {
 	}
 

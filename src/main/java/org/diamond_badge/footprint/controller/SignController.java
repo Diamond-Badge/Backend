@@ -13,6 +13,7 @@ import org.diamond_badge.footprint.jpa.entity.RoleType;
 import org.diamond_badge.footprint.jpa.entity.User;
 import org.diamond_badge.footprint.jpa.entity.UserRefreshToken;
 import org.diamond_badge.footprint.jpa.repo.UserRefreshTokenRepository;
+import org.diamond_badge.footprint.jpa.repo.UserRepository;
 import org.diamond_badge.footprint.model.SingleResult;
 import org.diamond_badge.footprint.model.social.RetKakaoAuth;
 import org.diamond_badge.footprint.model.social.RetNaverAuth;
@@ -32,9 +33,7 @@ import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
 import lombok.RequiredArgsConstructor;
-
 
 @Api(tags = {"1. Sign"})
 @RequiredArgsConstructor
@@ -42,14 +41,24 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping(value = "/api/v1/auth")
 public class SignController {
 
+	private final static long THREE_DAYS_MSEC = 259200000;
+	private final static String REFRESH_TOKEN = "refresh_token";
 	private final JwtTokenProvider jwtTokenProvider;
 	private final ResponseService responseService;
 	private final UserService userService;
 	private final KakaoService kakaoService;
 	private final NaverService naverService;
 	private final UserRefreshTokenRepository userRefreshTokenRepository;
-	private final static long THREE_DAYS_MSEC = 259200000;
-	private final static String REFRESH_TOKEN = "refresh_token";
+	private final UserRepository userRepository;
+
+	@ApiOperation(value = "운영자 로그인", notes = "운영자 계정을 통해 로그인한다.")
+	@PostMapping(value = "/signin")
+	public SingleResult<String> userlogin(
+		String id, String password) throws Throwable {
+
+		return responseService.getSingleResult(
+			jwtTokenProvider.createToken(id, RoleType.ADMIN));
+	}
 
 	@ApiOperation(value = "소셜 로그인", notes = " 소셜 회원 로그인을 한다.")
 	@PostMapping(value = "/signin/{provider}")
@@ -63,7 +72,7 @@ public class SignController {
 
 		switch (provider) {
 			case "naver":
-				RetNaverAuth retNaverAuth=naverService.getNaverTokenInfo(code);
+				RetNaverAuth retNaverAuth = naverService.getNaverTokenInfo(code);
 				signedUser = userService.signupByNaver(retNaverAuth.getAccess_token(), provider);
 				break;
 			case "kakao":
@@ -72,17 +81,18 @@ public class SignController {
 				break;
 		}
 
-		String refreshToken= jwtTokenProvider.createRefreshToken(String.valueOf(signedUser.getEmail()), signedUser.getRoleType());
+		String refreshToken = jwtTokenProvider.createRefreshToken(String.valueOf(signedUser.getEmail()),
+			signedUser.getRoleType());
 
-		UserRefreshToken userRefreshToken=userRefreshTokenRepository.findByUserEmail(signedUser.getEmail());
-		if(userRefreshToken==null){
-			userRefreshToken=new UserRefreshToken(signedUser.getEmail(),refreshToken);
+		UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserEmail(signedUser.getEmail());
+		if (userRefreshToken == null) {
+			userRefreshToken = new UserRefreshToken(signedUser.getEmail(), refreshToken);
 			userRefreshTokenRepository.saveAndFlush(userRefreshToken);
-		}else{
+		} else {
 			userRefreshToken.setRefreshToken(refreshToken);
 		}
-		long refreshTokenExpiry= jwtTokenProvider.getREFRESH_EXPIRATION();
-		int cookieMaxAge = (int) refreshTokenExpiry / 60;
+		long refreshTokenExpiry = jwtTokenProvider.getREFRESH_EXPIRATION();
+		int cookieMaxAge = (int)refreshTokenExpiry / 60;
 		CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
 		CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
 
@@ -91,9 +101,9 @@ public class SignController {
 
 	}
 
-	@ApiOperation(value="refreshToken 값 -> AccessToken 값",notes = "refreshToken 값을 이용해 AccessToken 값을 얻는다")
+	@ApiOperation(value = "refreshToken 값 -> AccessToken 값", notes = "refreshToken 값을 이용해 AccessToken 값을 얻는다")
 	@GetMapping("/refresh")
-	public SingleResult<String> refreshToken (HttpServletRequest request, HttpServletResponse response) {
+	public SingleResult<String> refreshToken(HttpServletRequest request, HttpServletResponse response) {
 		// access token 확인
 		String accessToken = jwtTokenProvider.resolveToken((HttpServletRequest)request);
 		if (jwtTokenProvider.validateToken(accessToken)) {
@@ -101,7 +111,7 @@ public class SignController {
 			//오류반환
 		}
 
-		Claims claims= jwtTokenProvider.getExpiredTokenClaims(accessToken);
+		Claims claims = jwtTokenProvider.getExpiredTokenClaims(accessToken);
 		String userId = jwtTokenProvider.getUserPk(accessToken);
 		RoleType roleType = RoleType.of(claims.get("role", String.class));
 
@@ -110,33 +120,32 @@ public class SignController {
 			.map(Cookie::getValue)
 			.orElse((null));
 
-
 		if (jwtTokenProvider.validateToken(refreshToken)) {
 			//오류반환
 			throw new NotExpiredTokenYetException();
 		}
 
 		// userId refresh token 으로 DB 확인
-		UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserEmailAndRefreshToken(userId, refreshToken);
+		UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserEmailAndRefreshToken(userId,
+			refreshToken);
 		if (userRefreshToken == null) {
 			throw new InvalidRefreshTokenException();
 			//요류반환
 		}
 
 		Date now = new Date();
-		String newAccessToken= jwtTokenProvider.createToken(userId, roleType);
-
+		String newAccessToken = jwtTokenProvider.createToken(userId, roleType);
 
 		long validTime = jwtTokenProvider.getExpiredTokenClaims(refreshToken).getExpiration().getTime() - now.getTime();
 
 		// refresh 토큰 기간이 3일 이하로 남은 경우, refresh 토큰 갱신
 		if (validTime <= THREE_DAYS_MSEC) {
-			String newRefreshToken= jwtTokenProvider.createRefreshToken(userId, roleType);
+			String newRefreshToken = jwtTokenProvider.createRefreshToken(userId, roleType);
 
 			// DB에 refresh 토큰 업데이트
 			userRefreshToken.setRefreshToken(newRefreshToken);
-			long refreshTokenExpiry= jwtTokenProvider.getREFRESH_EXPIRATION();
-			int cookieMaxAge = (int) refreshTokenExpiry / 60;
+			long refreshTokenExpiry = jwtTokenProvider.getREFRESH_EXPIRATION();
+			int cookieMaxAge = (int)refreshTokenExpiry / 60;
 			CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
 			CookieUtil.addCookie(response, REFRESH_TOKEN, newRefreshToken, cookieMaxAge);
 		}

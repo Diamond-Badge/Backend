@@ -1,6 +1,6 @@
 package org.diamond_badge.footprint.advice.exception;
 
-public class NotExpiredTokenYetException extends RuntimeException{
+public class NotExpiredTokenYetException extends RuntimeException {
 	public NotExpiredTokenYetException() {
 	}
 

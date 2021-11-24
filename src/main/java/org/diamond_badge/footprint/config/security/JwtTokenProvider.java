@@ -2,14 +2,12 @@ package org.diamond_badge.footprint.config.security;
 
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.diamond_badge.footprint.jpa.entity.RoleType;
 import org.springframework.core.env.Environment;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,7 +37,7 @@ public class JwtTokenProvider {
 	protected void init() {
 		SECRET_KEY = Base64.getEncoder().encodeToString(env.getProperty("spring.jwt.secret").getBytes());
 		EXPIRATION_TIME = Long.parseLong(env.getProperty("spring.jwt.expiration_time"));
-		REFRESH_EXPIRATION=Long.parseLong(env.getProperty("spring.jwt.refreshTokenExpiry"));
+		REFRESH_EXPIRATION = Long.parseLong(env.getProperty("spring.jwt.refreshTokenExpiry"));
 
 	}
 
@@ -56,7 +54,6 @@ public class JwtTokenProvider {
 			.compact();
 	}
 
-
 	// Jwt 토큰 생성
 	public String createRefreshToken(String userPk, RoleType roles) {
 		Claims claims = Jwts.claims().setSubject(userPk);
@@ -69,10 +66,16 @@ public class JwtTokenProvider {
 			.signWith(SignatureAlgorithm.HS256, SECRET_KEY) // 암호화 알고리즘, secret값 세팅
 			.compact();
 	}
+
 	// Jwt 토큰으로 인증 정보를 조회
 	public Authentication getAuthentication(String token) {
 		UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+	}
+
+	public String getUserName(String token) {
+		UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
+		return userDetails.getUsername();
 	}
 
 	// Jwt 토큰에서 회원 구별 정보 추출
@@ -80,7 +83,7 @@ public class JwtTokenProvider {
 		return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
 	}
 
-	public long getREFRESH_EXPIRATION(){
+	public long getREFRESH_EXPIRATION() {
 		return REFRESH_EXPIRATION;
 	}
 
