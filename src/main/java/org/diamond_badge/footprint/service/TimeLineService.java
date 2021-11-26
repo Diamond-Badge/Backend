@@ -28,7 +28,9 @@ public class TimeLineService {
 	//단건조회
 	public TimeLine getTimeLine(String email, LocalDate localDate) {
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-		return timeLineRepository.findTimeLineByCreatedAtContainsAndUser(localDate, user).orElseThrow();
+		LocalDateTime startDatetime = LocalDateTime.of(localDate, LocalTime.of(00, 00, 00));
+		LocalDateTime endDatetime = LocalDateTime.of(localDate, LocalTime.of(23, 59, 59));
+		return timeLineRepository.findTimeLineByCreatedAtBetweenAndUser(startDatetime, endDatetime, user).orElseThrow();
 	}
 
 	//한달 단위 내 타임라인 불러오기

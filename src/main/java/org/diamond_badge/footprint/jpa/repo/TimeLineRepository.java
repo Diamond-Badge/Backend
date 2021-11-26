@@ -1,6 +1,5 @@
 package org.diamond_badge.footprint.jpa.repo;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +13,5 @@ public interface TimeLineRepository extends JpaRepository<TimeLine, Long> {
 	Optional<TimeLine> findTimeLineByCreatedAtBetweenAndUser(LocalDateTime start, LocalDateTime end, User user);
 
 	List<TimeLine> findTimeLinesByCreatedAtBetweenAndUser(LocalDateTime start, LocalDateTime end, User user);
-
-	Optional<TimeLine> findTimeLineByCreatedAtContainsAndUser(LocalDate time, User user);
 
 }

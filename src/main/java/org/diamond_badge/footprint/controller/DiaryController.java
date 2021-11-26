@@ -166,6 +166,4 @@ public class DiaryController {
 		return responseService.getSingleResult(diaryService.deleteDiary(diarySeq));
 	}
 
-	//좋아요기능
-
 }

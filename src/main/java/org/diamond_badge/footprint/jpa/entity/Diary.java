@@ -1,10 +1,9 @@
 package org.diamond_badge.footprint.jpa.entity;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,8 +28,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "DIARY")
 public class Diary {
-	@OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
-	Set<Like> likes = new HashSet<>();
 	@JsonIgnore
 	@Id
 	@Column(name = "DIARY_SEQ")
@@ -66,7 +63,7 @@ public class Diary {
 	private boolean isWritten;
 	@Column(name = "DIARY_LIKE")
 	@NotNull
-	private int like;
+	private int likeCount;
 	@Column(name = "CREATED_AT")
 	@NotNull
 	private LocalDateTime createdAt;
@@ -78,6 +75,9 @@ public class Diary {
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private TimeLine timeLine;
 
+	@OneToMany(mappedBy = "diary")
+	private List<Like> likes = new ArrayList<>();
+
 	public Diary(String location, double latitude, double longtitude, LocalDateTime createdAt, LocalDateTime modifiedAt,
 		String userName, String userEamil) {
 		this.location = this.place = location;
@@ -88,7 +88,7 @@ public class Diary {
 		this.modifiedAt = modifiedAt;
 		this.userName = userName;
 		this.userEmail = userEamil;
-		this.like = 0;
+		this.likeCount = 0;
 	}
 
 	public void setPalce(String place) {
@@ -101,6 +101,22 @@ public class Diary {
 
 	public void setTimeLine(TimeLine timeLine) {
 		this.timeLine = timeLine;
+	}
+
+	public void setIsWritten(boolean isWritten) {
+		this.isWritten = isWritten;
+	}
+
+	public void mappingLike(Like like) {
+		this.likes.add(like);
+	}
+
+	public void updateLikeCount() {
+		this.likeCount = this.likes.size();
+	}
+
+	public void cancleLike(Like like) {
+		this.likes.remove(like);
 	}
 
 }
