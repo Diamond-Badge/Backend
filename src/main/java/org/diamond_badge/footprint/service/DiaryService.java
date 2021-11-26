@@ -100,6 +100,7 @@ public class DiaryService {
 	@Transactional
 	public Diary updateDiary(String content, String place, Long diarySeq) {
 		Diary diary = diaryRepository.findById(diarySeq).orElseThrow();
+		diary.setIsWritten(true);
 		diary.setContent(content);
 		diary.setPalce(place);
 		return diary;

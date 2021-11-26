@@ -1,10 +1,5 @@
 package org.diamond_badge.footprint.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
 import org.diamond_badge.footprint.advice.exception.UserNotFoundException;
 import org.diamond_badge.footprint.jpa.entity.Diary;
 import org.diamond_badge.footprint.jpa.entity.Like;
@@ -26,42 +21,23 @@ public class LikeService {
 	private final UserRepository userRepository;
 	private final DiaryRepository diaryRepository;
 
-	public boolean addLike(String email, Long diarySeq) {
+	@Transactional
+	public boolean likes(String email, Long diarySeq) {
 		Diary diary = diaryRepository.findDiaryByDiarySeq(diarySeq);
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-		if (isNotAlreadyLike(user, diary)) {
-			likeRepository.save(new Like(user, diary));
+		Like like = likeRepository.findByUserAndDiary(user, diary);
+		if (like == null) {
+			Like newLike = new Like(user, diary);
+			newLike = likeRepository.save(newLike);
+			diary.updateLikeCount();
+			diaryRepository.save(diary);
 			return true;
 		} else {
+			likeRepository.deleteById(like.getLikeSeq());
+			diary.cancleLike(like);
+			diary.updateLikeCount();
 			return false;
 		}
-	}
-
-	public void cancelLike(String email, Long diarySeq) {
-		Diary diary = diaryRepository.findDiaryByDiarySeq(diarySeq);
-		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-		Like like = likeRepository.findByUserAndDiary(user, diary).orElseThrow();
-		likeRepository.delete(like);
-	}
-
-	public List<String> count(String email, Long diarySeq) {
-		Diary diary = diaryRepository.findDiaryByDiarySeq(diarySeq);
-		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-
-		Integer diaryLikeCount = likeRepository.countByDiary(diary).orElse(0);
-		List<String> resultData =
-			new ArrayList<>(Arrays.asList(String.valueOf(diaryLikeCount)));
-
-		if (Objects.nonNull(user)) {
-			resultData.add(String.valueOf(isNotAlreadyLike(user, diary)));
-			return resultData;
-		}
-
-		return resultData;
-	}
-
-	public boolean isNotAlreadyLike(User user, Diary diary) {
-		return likeRepository.findByUserAndDiary(user, diary).isEmpty();
 	}
 
 }
