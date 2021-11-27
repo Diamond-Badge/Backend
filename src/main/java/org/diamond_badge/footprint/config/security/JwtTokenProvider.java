@@ -104,14 +104,13 @@ public class JwtTokenProvider {
 
 	public Claims getExpiredTokenClaims(String jwtToken) {
 		try {
-			Jwts.parserBuilder()
+			return Jwts.parserBuilder()
 				.setSigningKey(SECRET_KEY)
 				.build()
 				.parseClaimsJws(jwtToken)
 				.getBody();
 		} catch (ExpiredJwtException e) {
 			log.info("Expired JWT token.");
-			return e.getClaims();
 		}
 		return null;
 	}

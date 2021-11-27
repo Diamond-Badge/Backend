@@ -54,8 +54,21 @@ public class SignController {
 	@ApiOperation(value = "운영자 로그인", notes = "운영자 계정을 통해 로그인한다.")
 	@PostMapping(value = "/signin")
 	public SingleResult<String> userlogin(
-		String id, String password) throws Throwable {
+		String id, String password, HttpServletRequest request,
+		HttpServletResponse response) throws Throwable {
+		String refreshToken = jwtTokenProvider.createRefreshToken(id, RoleType.ADMIN);
 
+		UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserEmail(id);
+		if (userRefreshToken == null) {
+			userRefreshToken = new UserRefreshToken(id, refreshToken);
+			userRefreshTokenRepository.saveAndFlush(userRefreshToken);
+		} else {
+			userRefreshToken.setRefreshToken(refreshToken);
+		}
+		long refreshTokenExpiry = jwtTokenProvider.getREFRESH_EXPIRATION();
+		int cookieMaxAge = (int)refreshTokenExpiry / 60;
+		CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+		CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
 		return responseService.getSingleResult(
 			jwtTokenProvider.createToken(id, RoleType.ADMIN));
 	}
@@ -105,13 +118,13 @@ public class SignController {
 	@GetMapping("/refresh")
 	public SingleResult<String> refreshToken(HttpServletRequest request, HttpServletResponse response) {
 		// access token 확인
-		String accessToken = jwtTokenProvider.resolveToken((HttpServletRequest)request);
-		if (jwtTokenProvider.validateToken(accessToken)) {
-			throw new NotExpiredTokenYetException();
-			//오류반환
-		}
+		String accessToken = jwtTokenProvider.resolveToken(request).split(" ")[1].trim();
+		System.out.println(accessToken);
 
 		Claims claims = jwtTokenProvider.getExpiredTokenClaims(accessToken);
+		if (claims == null) {
+			throw new NotExpiredTokenYetException();
+		}
 		String userId = jwtTokenProvider.getUserPk(accessToken);
 		RoleType roleType = RoleType.of(claims.get("role", String.class));
 
@@ -120,7 +133,7 @@ public class SignController {
 			.map(Cookie::getValue)
 			.orElse((null));
 
-		if (jwtTokenProvider.validateToken(refreshToken)) {
+		if (jwtTokenProvider.getExpiredTokenClaims(accessToken).isEmpty()) {
 			//오류반환
 			throw new NotExpiredTokenYetException();
 		}
