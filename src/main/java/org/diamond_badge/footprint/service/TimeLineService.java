@@ -9,6 +9,7 @@ import java.time.temporal.ChronoField;
 import java.util.List;
 
 import org.diamond_badge.footprint.advice.exception.UserNotFoundException;
+import org.diamond_badge.footprint.jpa.entity.EmotionType;
 import org.diamond_badge.footprint.jpa.entity.TimeLine;
 import org.diamond_badge.footprint.jpa.entity.User;
 import org.diamond_badge.footprint.jpa.repo.TimeLineRepository;
@@ -24,6 +25,10 @@ import lombok.RequiredArgsConstructor;
 public class TimeLineService {
 	private final TimeLineRepository timeLineRepository;
 	private final UserRepository userRepository;
+
+	public TimeLine getTimeLineByid(long timeLineSeq) {
+		return timeLineRepository.findById(timeLineSeq).orElseThrow();
+	}
 
 	//단건조회
 	public TimeLine getTimeLine(String email, LocalDate localDate) {
@@ -52,5 +57,12 @@ public class TimeLineService {
 		LocalDateTime endDatetime = LocalDateTime.of(dateTime.plusDays(7 - day).getYear(),
 			dateTime.plusDays(7 - day).getMonthValue(), dateTime.plusDays(7 - day).getDayOfMonth(), 23, 59, 59);
 		return timeLineRepository.findTimeLinesByCreatedAtBetweenAndUser(startDatetime, endDatetime, user);
+	}
+
+	@Transactional
+	public TimeLine setEmotion(String emotionName, long timeLineSeq) {
+		TimeLine timeLine = timeLineRepository.findById(timeLineSeq).orElseThrow();
+		timeLine.setEmotionType(EmotionType.valueOf(emotionName));
+		return timeLine;
 	}
 }
