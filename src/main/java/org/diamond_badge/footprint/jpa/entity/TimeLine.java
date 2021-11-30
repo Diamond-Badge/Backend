@@ -54,6 +54,7 @@ public class TimeLine {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_SEQ")
+	@JsonIgnore
 	private User user;
 
 	public TimeLine(EmotionType emotionType, LocalDateTime createdAt, User user) {
@@ -65,7 +66,10 @@ public class TimeLine {
 
 	public void newDiary(Diary diary) {
 		this.diarys.add(diary);
+	}
 
+	public void setEmotionType(EmotionType emotionType) {
+		this.emotionType = emotionType;
 	}
 
 }

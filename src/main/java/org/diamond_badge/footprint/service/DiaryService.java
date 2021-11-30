@@ -113,5 +113,4 @@ public class DiaryService {
 		return true;
 	}
 
-	//좋아요기능
 }

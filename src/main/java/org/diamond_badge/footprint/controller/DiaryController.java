@@ -4,13 +4,11 @@ import java.time.LocalDate;
 
 import org.diamond_badge.footprint.config.security.JwtTokenProvider;
 import org.diamond_badge.footprint.jpa.entity.Diary;
-import org.diamond_badge.footprint.jpa.entity.TimeLine;
 import org.diamond_badge.footprint.model.CommonResult;
 import org.diamond_badge.footprint.model.ListResult;
 import org.diamond_badge.footprint.model.SingleResult;
 import org.diamond_badge.footprint.service.DiaryService;
 import org.diamond_badge.footprint.service.ResponseService;
-import org.diamond_badge.footprint.service.TimeLineService;
 import org.diamond_badge.footprint.vo.DiaryRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,14 +27,13 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 
-@Api(tags = {"2. Diary"})
+@Api(tags = {"3. Diary"})
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/api/v1/diary")
 public class DiaryController {
 
 	private final DiaryService diaryService;
-	private final TimeLineService timeLineService;
 	private final ResponseService responseService;
 	private final JwtTokenProvider jwtTokenProvider;
 
@@ -46,42 +43,6 @@ public class DiaryController {
 		@PathVariable Long diarySeq
 	) {
 		return responseService.getSingleResult(diaryService.findDiary(diarySeq));
-	}
-
-	@ApiOperation(value = "타임라인 단건조회", notes = "타임라인을 불러옵니다.")
-	@GetMapping("/timeline")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "Autorization", value = "로그인 성공 후 jwt token", required = true, dataType = "String", paramType = "header")
-	})
-	public SingleResult<TimeLine> getTodayTimeLine(
-		@RequestHeader("Autorization") String AuthToken,
-		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDate) {
-		String email = jwtTokenProvider.getUserPk(AuthToken);
-		return responseService.getSingleResult(timeLineService.getTimeLine(email, localDate));
-	}
-
-	@ApiOperation(value = "타임라인 주", notes = "타임라인을 주 단위로 불러옵니다.")
-	@GetMapping("/timeline/week")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "Autorization", value = "로그인 성공 후 jwt token", required = true, dataType = "String", paramType = "header")
-	})
-	public ListResult<TimeLine> getWeekTimeLine(
-		@RequestHeader("Autorization") String AuthToken,
-		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDate) {
-		String email = jwtTokenProvider.getUserPk(AuthToken);
-		return responseService.getListResult(timeLineService.findTimeLinesByWeek(email, localDate));
-	}
-
-	@ApiOperation(value = "타임라인 월", notes = "타임라인을 월 단위로 불러옵니다.")
-	@GetMapping("/timeline/month")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "Autorization", value = "로그인 성공 후 jwt token", required = true, dataType = "String", paramType = "header")
-	})
-	public ListResult<TimeLine> getMonthTimeLine(
-		@RequestHeader("Autorization") String AuthToken,
-		@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDate) {
-		String email = jwtTokenProvider.getUserPk(AuthToken);
-		return responseService.getListResult(timeLineService.findTimeLinesByMonth(email, localDate));
 	}
 
 	@ApiOperation(value = "하루 일기", notes = "하루 단위로 일기를 불러옵니다.(지도)")
@@ -136,7 +97,6 @@ public class DiaryController {
 		@RequestHeader("Autorization") String AuthToken,
 		@RequestBody DiaryRequest diaryRequest) {
 		String email = jwtTokenProvider.getUserPk(AuthToken);
-		System.out.println(email);
 		return responseService.getSingleResult(diaryService.createDiary(diaryRequest, email));
 	}
 
