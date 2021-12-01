@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,7 +18,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "DIARY")
 public class Diary {
-	@JsonIgnore
+
 	@Id
 	@Column(name = "DIARY_SEQ")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,8 +75,11 @@ public class Diary {
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private TimeLine timeLine;
 
-	@OneToMany(mappedBy = "diary")
+	@OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
 	private List<Like> likes = new ArrayList<>();
+
+	@OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
+	private List<DiaryImages> diaryImages = new ArrayList<>();
 
 	public Diary(String location, double latitude, double longtitude, LocalDateTime createdAt, LocalDateTime modifiedAt,
 		String userName, String userEamil) {

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -30,7 +31,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "TIMELINE")
 public class TimeLine {
-	@JsonIgnore
+
 	@Id
 	@Column(name = "TIMELINE_SEQ")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,7 +50,7 @@ public class TimeLine {
 	@NotNull
 	private LocalDateTime modifiedAt;
 
-	@OneToMany(mappedBy = "timeLine")
+	@OneToMany(mappedBy = "timeLine", cascade = CascadeType.ALL)
 	private List<Diary> diarys = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
