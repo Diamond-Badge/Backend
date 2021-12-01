@@ -1,13 +1,18 @@
 package org.diamond_badge.footprint.controller;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import org.diamond_badge.footprint.config.security.JwtTokenProvider;
 import org.diamond_badge.footprint.jpa.entity.Diary;
+import org.diamond_badge.footprint.jpa.entity.DiaryImages;
 import org.diamond_badge.footprint.model.CommonResult;
 import org.diamond_badge.footprint.model.ListResult;
 import org.diamond_badge.footprint.model.SingleResult;
 import org.diamond_badge.footprint.service.DiaryService;
+import org.diamond_badge.footprint.service.FileService;
 import org.diamond_badge.footprint.service.ResponseService;
 import org.diamond_badge.footprint.vo.DiaryRequest;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -36,6 +42,7 @@ public class DiaryController {
 	private final DiaryService diaryService;
 	private final ResponseService responseService;
 	private final JwtTokenProvider jwtTokenProvider;
+	private final FileService fileService;
 
 	@ApiOperation(value = "일기 단건 조회", notes = "일기 단건 조회")
 	@GetMapping("/map/{diarySeq}")
@@ -103,14 +110,15 @@ public class DiaryController {
 	//글내용수정
 	@ApiOperation(value = "글내용 수정", notes = "글내용 수정")
 	@PostMapping("/{diarySeq}")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "Autorization", value = "로그인 성공 후 jwt token", required = true, dataType = "String", paramType = "header")
-	})
 	public SingleResult<Diary> updateDiary(
-		@RequestHeader("Autorization") String AuthToken,
 		@PathVariable Long diarySeq,
 		@RequestParam("place") String place,
-		@RequestParam("content") String content) {
+		@RequestParam("content") String content,
+		@RequestParam("files") MultipartFile[] files) throws IOException {
+		Diary diary = diaryService.findDiary(diarySeq);
+		// 반환을 할 파일 리스트
+		String name = diary.getPlace();
+		List<DiaryImages> fileList = fileService.savefiles(Arrays.asList(files), name, diary);
 		return responseService.getSingleResult(diaryService.updateDiary(content, place, diarySeq));
 	}
 
