@@ -3,6 +3,7 @@ package org.diamond_badge.footprint.service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.diamond_badge.footprint.advice.exception.UserNotFoundException;
 import org.diamond_badge.footprint.jpa.entity.ProviderType;
 import org.diamond_badge.footprint.jpa.entity.RoleType;
 import org.diamond_badge.footprint.jpa.entity.User;
@@ -59,6 +60,28 @@ public class UserService {
 
 			return naverUser;
 		}
+	}
+
+	public User getUser(String email) {
+		return userRepository.findByEmail(email).orElseThrow();
+	}
+
+	//닉네임 변경
+	public boolean setUsername(String email, String name) {
+		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+		user.setUsername(name);
+		return true;
+	}
+
+	//프로필 사진 등록
+	public void setProfileUrl(String email, String profilePath) {
+		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+		user.setProfileImageUrl(profilePath);
+	}
+
+	public void setIsPublic(String email) {
+		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+		user.setPrivate();
 	}
 
 }

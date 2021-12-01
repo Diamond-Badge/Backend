@@ -88,7 +88,7 @@ public class DiaryController {
 		return responseService.getListResult(diaryService.findDiarysByMonth(email, localDate));
 	}
 
-	@ApiOperation(value = "전체조회", notes = "지도 전송 어제 6시부터 오늘 오전 6시까지")
+	@ApiOperation(value = "전체조회", notes = "어제 6시부터 오늘 오전 6시까지 일기를 불러옵니다. isWritten이 true인 일기만 불러옵니다.")
 	@GetMapping("/map")
 	public ListResult<Diary> getDiarys() {
 		return responseService.getListResult(diaryService.findDiarys());
@@ -126,11 +126,11 @@ public class DiaryController {
 	@ApiOperation(value = "위치 삭제", notes = "위치를 삭제한다.")
 	@DeleteMapping("/{diarySeq}")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 jwt token", required = true, dataType = "String", paramType = "header")
+		@ApiImplicitParam(name = "Autorization", value = "로그인 성공 후 jwt token", required = true, dataType = "String", paramType = "header")
 	})
 	public CommonResult deleteDiary(
 		@PathVariable long diarySeq,
-		@RequestHeader("X-AUTH-TOKEN") String xAuthToken) {
+		@RequestHeader("Autorization") String AuthToken) {
 		return responseService.getSingleResult(diaryService.deleteDiary(diarySeq));
 	}
 

@@ -63,7 +63,7 @@ public class DiaryService {
 		LocalDateTime localDateTime = LocalDateTime.now();
 		LocalDateTime startDatetime = LocalDateTime.of(localDateTime.minusDays(1).toLocalDate(), LocalTime.of(6, 0, 0));
 		LocalDateTime endDatetime = LocalDateTime.of(localDateTime.toLocalDate(), LocalTime.of(6, 0, 0));
-		return diaryRepository.findDiariesByCreatedAtBetween(startDatetime, endDatetime);
+		return diaryRepository.findDiariesByCreatedAtBetweenAndIsWrittenIsTrue(startDatetime, endDatetime);
 	}
 
 	//위치 일기 단건 조회

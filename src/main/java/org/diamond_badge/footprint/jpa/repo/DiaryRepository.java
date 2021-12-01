@@ -13,7 +13,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
 	List<Diary> findByTimeLine(TimeLine timeLine);
 
-	List<Diary> findDiariesByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+	List<Diary> findDiariesByCreatedAtBetweenAndIsWrittenIsTrue(LocalDateTime start, LocalDateTime end);
 
 	List<Diary> findByCreatedAtBetweenAndUserEmail(LocalDateTime start, LocalDateTime end, String userEmail);
 
