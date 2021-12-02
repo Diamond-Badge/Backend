@@ -60,6 +60,10 @@ public class User {
 	@NotNull
 	private RoleType roleType;
 
+	@Column(name = "IS_PRIVATE")
+	@NotNull
+	private boolean isPrivate;
+
 	@Column(name = "CREATED_AT")
 	@NotNull
 	private LocalDateTime createdAt;
@@ -86,6 +90,7 @@ public class User {
 		this.profileImageUrl = profileImageUrl != null ? profileImageUrl : "";
 		this.providerType = providerType;
 		this.roleType = roleType;
+		this.isPrivate = false;
 		this.createdAt = createdAt;
 		this.modifiedAt = modifiedAt;
 	}
@@ -96,6 +101,13 @@ public class User {
 
 	public void setProfileImageUrl(String profileImageUrl) {
 		this.profileImageUrl = profileImageUrl;
+	}
+
+	public void setPrivate() {
+		if (this.isPrivate == false)
+			this.isPrivate = true;
+		else
+			this.isPrivate = false;
 	}
 
 	public void addTimeLine(TimeLine timeLine) {

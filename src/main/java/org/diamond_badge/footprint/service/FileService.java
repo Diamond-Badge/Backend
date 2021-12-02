@@ -9,6 +9,7 @@ import org.diamond_badge.footprint.jpa.entity.Diary;
 import org.diamond_badge.footprint.jpa.entity.DiaryImages;
 import org.diamond_badge.footprint.jpa.repo.DiaryImagesRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FileService {
 
 	private final DiaryImagesRepository diaryImagesRepository;
