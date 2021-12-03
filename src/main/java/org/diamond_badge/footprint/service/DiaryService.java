@@ -17,7 +17,7 @@ import org.diamond_badge.footprint.jpa.entity.User;
 import org.diamond_badge.footprint.jpa.repo.DiaryRepository;
 import org.diamond_badge.footprint.jpa.repo.TimeLineRepository;
 import org.diamond_badge.footprint.jpa.repo.UserRepository;
-import org.diamond_badge.footprint.vo.DiaryRequest;
+import org.diamond_badge.footprint.model.vo.DiaryRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,17 +74,16 @@ public class DiaryService {
 	//위치 등록 -> 처음 등록이면 timeLine 자동생성
 	@Transactional
 	public Diary createDiary(DiaryRequest diaryRequest, String email) {
-		LocalDateTime now = LocalDateTime.now();
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		Diary diary = new Diary(diaryRequest.getLocation(), diaryRequest.getLatitude(), diaryRequest.getLongtitude(),
-			now, now, user.getUsername(),
+			user.getUsername(),
 			user.getEmail());
 		LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0)); //오늘 00:00:00
 		LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59)); //오늘 23:59:59
 		Optional<TimeLine> timeLine = timeLineRepository.findTimeLineByCreatedAtBetweenAndUser(startDatetime,
 			endDatetime, user);
 		if (!timeLine.isPresent()) {
-			TimeLine newTimeLine = new TimeLine(EmotionType.DEFAULT, now, user);
+			TimeLine newTimeLine = new TimeLine(EmotionType.DEFAULT, user);
 			timeLineRepository.save(newTimeLine);
 			user.addTimeLine(newTimeLine);
 			newTimeLine.newDiary(diary);

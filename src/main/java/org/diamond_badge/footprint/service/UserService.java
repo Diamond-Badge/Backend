@@ -36,7 +36,7 @@ public class UserService {
 		} else {
 			System.out.println(kakaoAccount.getNickname() + " " + kakaoAccount.getEmail());
 			User kakaoUser = new User(kakaoAccount.getEmail(), kakaoAccount.getEmail(),
-				null, ProviderType.KAKAO, RoleType.USER, now, now);
+				null, ProviderType.KAKAO, RoleType.USER);
 
 			return userRepository.save(kakaoUser);
 		}
@@ -54,7 +54,7 @@ public class UserService {
 		} else {
 
 			User naverUser = new User(naverAccount.getId(), naverAccount.getEmail(), null
-				, ProviderType.NAVER, RoleType.USER, now, now);
+				, ProviderType.NAVER, RoleType.USER);
 
 			userRepository.save(naverUser);
 

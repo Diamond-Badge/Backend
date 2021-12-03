@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
@@ -26,6 +31,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "DIARY")
 public class Diary {
 
@@ -66,9 +72,11 @@ public class Diary {
 	private int likeCount;
 	@Column(name = "CREATED_AT")
 	@NotNull
+	@CreatedDate
 	private LocalDateTime createdAt;
 	@Column(name = "MODIFIED_AT")
 	@NotNull
+	@LastModifiedDate
 	private LocalDateTime modifiedAt;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TIMELINE_SEQ")
@@ -81,14 +89,12 @@ public class Diary {
 	@OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
 	private List<DiaryImages> diaryImages = new ArrayList<>();
 
-	public Diary(String location, double latitude, double longtitude, LocalDateTime createdAt, LocalDateTime modifiedAt,
+	public Diary(String location, double latitude, double longtitude,
 		String userName, String userEamil) {
 		this.location = this.place = location;
 		this.latitude = latitude;
 		this.longtitude = longtitude;
 		this.isWritten = false;
-		this.createdAt = createdAt;
-		this.modifiedAt = modifiedAt;
 		this.userName = userName;
 		this.userEmail = userEamil;
 		this.likeCount = 0;
@@ -108,10 +114,6 @@ public class Diary {
 
 	public void setIsWritten(boolean isWritten) {
 		this.isWritten = isWritten;
-	}
-
-	public void mappingLike(Like like) {
-		this.likes.add(like);
 	}
 
 	public void updateLikeCount() {

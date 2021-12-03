@@ -1,4 +1,4 @@
-package org.diamond_badge.footprint.vo;
+package org.diamond_badge.footprint.model.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

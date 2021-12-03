@@ -1,4 +1,4 @@
-package org.diamond_badge.footprint.util;
+package org.diamond_badge.footprint.model.util;
 
 import java.util.Base64;
 import java.util.Optional;
