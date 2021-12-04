@@ -60,6 +60,9 @@ public class TimeLine {
 	@OneToMany(mappedBy = "timeLine", cascade = CascadeType.ALL)
 	private List<Diary> diarys = new ArrayList<>();
 
+	@OneToMany(mappedBy = "timeLine", cascade = CascadeType.ALL)
+	private List<TimeLineSticker> stickers = new ArrayList<>();
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_SEQ")
 	@JsonIgnore
