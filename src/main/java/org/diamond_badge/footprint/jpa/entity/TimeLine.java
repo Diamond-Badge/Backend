@@ -61,7 +61,7 @@ public class TimeLine {
 	private List<Diary> diarys = new ArrayList<>();
 
 	@OneToMany(mappedBy = "timeLine", cascade = CascadeType.ALL)
-	private List<TimeLineSticker> stickers = new ArrayList<>();
+	private List<Sticker> stickers = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_SEQ")
