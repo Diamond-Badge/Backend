@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,6 +33,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "USER")
+@EntityListeners(AuditingEntityListener.class)
 public class User {
 	@JsonIgnore
 	@Id
@@ -66,10 +72,11 @@ public class User {
 
 	@Column(name = "CREATED_AT")
 	@NotNull
+	@CreatedDate
 	private LocalDateTime createdAt;
-
 	@Column(name = "MODIFIED_AT")
 	@NotNull
+	@LastModifiedDate
 	private LocalDateTime modifiedAt;
 
 	@OneToMany(mappedBy = "user")
@@ -81,9 +88,7 @@ public class User {
 		@NotNull @Size(max = 512) String email,
 		@NotNull @Size(max = 512) String profileImageUrl,
 		@NotNull ProviderType providerType,
-		@NotNull RoleType roleType,
-		@NotNull LocalDateTime createdAt,
-		@NotNull LocalDateTime modifiedAt
+		@NotNull RoleType roleType
 	) {
 		this.username = username;
 		this.email = email != null ? email : "NO_EMAIL";
@@ -91,8 +96,6 @@ public class User {
 		this.providerType = providerType;
 		this.roleType = roleType;
 		this.isPrivate = false;
-		this.createdAt = createdAt;
-		this.modifiedAt = modifiedAt;
 	}
 
 	public void setUsername(String username) {
