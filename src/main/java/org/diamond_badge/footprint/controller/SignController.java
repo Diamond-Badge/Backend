@@ -13,13 +13,8 @@ import org.diamond_badge.footprint.jpa.entity.RoleType;
 import org.diamond_badge.footprint.jpa.entity.User;
 import org.diamond_badge.footprint.jpa.entity.UserRefreshToken;
 import org.diamond_badge.footprint.jpa.repo.UserRefreshTokenRepository;
-import org.diamond_badge.footprint.jpa.repo.UserRepository;
 import org.diamond_badge.footprint.model.SingleResult;
-import org.diamond_badge.footprint.model.social.RetKakaoAuth;
-import org.diamond_badge.footprint.model.social.RetNaverAuth;
 import org.diamond_badge.footprint.model.util.CookieUtil;
-import org.diamond_badge.footprint.service.KakaoService;
-import org.diamond_badge.footprint.service.NaverService;
 import org.diamond_badge.footprint.service.ResponseService;
 import org.diamond_badge.footprint.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,10 +41,7 @@ public class SignController {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final ResponseService responseService;
 	private final UserService userService;
-	private final KakaoService kakaoService;
-	private final NaverService naverService;
 	private final UserRefreshTokenRepository userRefreshTokenRepository;
-	private final UserRepository userRepository;
 
 	@ApiOperation(value = "운영자 로그인", notes = "운영자 계정을 통해 로그인한다.")
 	@PostMapping(value = "/signin")
@@ -79,18 +71,16 @@ public class SignController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@ApiParam(value = "서비스 제공자 provider", required = true, defaultValue = "kakao") @PathVariable String provider,
-		@ApiParam(value = "소셜 인가 코드", required = true) @RequestParam String code) {
+		@ApiParam(value = "소셜 accessToken", required = true) @RequestParam String accessToken) {
 
 		User signedUser = null;
 
 		switch (provider) {
 			case "naver":
-				RetNaverAuth retNaverAuth = naverService.getNaverTokenInfo(code);
-				signedUser = userService.signupByNaver(retNaverAuth.getAccess_token(), provider);
+				signedUser = userService.signupByNaver(accessToken, provider);
 				break;
 			case "kakao":
-				RetKakaoAuth retKakaoAuth = kakaoService.getKakaoTokenInfo(code);
-				signedUser = userService.signupByKakao(retKakaoAuth.getAccess_token(), provider);
+				signedUser = userService.signupByKakao(accessToken, provider);
 				break;
 		}
 
