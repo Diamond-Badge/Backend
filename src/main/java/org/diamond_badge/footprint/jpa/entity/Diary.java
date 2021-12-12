@@ -2,7 +2,9 @@ package org.diamond_badge.footprint.jpa.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -67,6 +69,9 @@ public class Diary {
 	@Column(name = "IS_WRITTEN")
 	@NotNull
 	private boolean isWritten;
+	@Column(name = "DIARY_REPORT")
+	@NotNull
+	private int reportCount;
 	@Column(name = "DIARY_LIKE")
 	@NotNull
 	private int likeCount;
@@ -84,7 +89,10 @@ public class Diary {
 	private TimeLine timeLine;
 
 	@OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
-	private List<Like> likes = new ArrayList<>();
+	private Set<Like> likes = new LinkedHashSet<>();
+
+	@OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
+	private Set<Report> reports = new LinkedHashSet<>();
 
 	@OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
 	private List<DiaryImages> diaryImages = new ArrayList<>();
@@ -98,6 +106,7 @@ public class Diary {
 		this.userName = userName;
 		this.userEmail = userEamil;
 		this.likeCount = 0;
+		this.reportCount = 0;
 	}
 
 	public void setPalce(String place) {
@@ -122,6 +131,13 @@ public class Diary {
 
 	public void cancleLike(Like like) {
 		this.likes.remove(like);
+	}
+
+	public void plusReport() {
+		this.reportCount = this.reports.size();
+		if (this.reportCount >= 3) {
+			this.isWritten = false;
+		}
 	}
 
 }
