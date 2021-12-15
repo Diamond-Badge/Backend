@@ -10,6 +10,9 @@ import org.diamond_badge.footprint.model.SingleResult;
 import org.diamond_badge.footprint.service.FileService;
 import org.diamond_badge.footprint.service.ResponseService;
 import org.diamond_badge.footprint.service.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -83,6 +86,17 @@ public class UserController {
 	) {
 		String email = jwtTokenProvider.getUserPk(AuthToken);
 		userService.setIsPublic(email);
+		return responseService.getSuccessResult();
+	}
+
+	@ApiOperation(value = "회원 탈퇴")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "Autorization", value = "로그인 성공 후 access_token", required = true, dataType = "String", paramType = "header")
+	})
+	@DeleteMapping(value = "")
+	public CommonResult delete(@RequestHeader("Autorization") String AuthToken) throws Throwable {
+		String email = jwtTokenProvider.getUserPk(AuthToken);
+		userService.deleteUser(email);
 		return responseService.getSuccessResult();
 	}
 
