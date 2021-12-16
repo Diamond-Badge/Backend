@@ -9,4 +9,6 @@ public interface UserRefreshTokenRepository extends JpaRepository<UserRefreshTok
 	UserRefreshToken findByUserEmail(String userEmail);
 
 	UserRefreshToken findByUserEmailAndRefreshToken(String userEmail, String refreshToken);
+
+	void deleteByUserEmail(String email);
 }

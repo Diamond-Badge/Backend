@@ -6,6 +6,7 @@ import org.diamond_badge.footprint.advice.exception.UserNotFoundException;
 import org.diamond_badge.footprint.jpa.entity.ProviderType;
 import org.diamond_badge.footprint.jpa.entity.RoleType;
 import org.diamond_badge.footprint.jpa.entity.User;
+import org.diamond_badge.footprint.jpa.repo.UserRefreshTokenRepository;
 import org.diamond_badge.footprint.jpa.repo.UserRepository;
 import org.diamond_badge.footprint.model.social.GoogleProfile;
 import org.diamond_badge.footprint.model.social.KakaoProfile;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final UserRefreshTokenRepository userRefreshTokenRepository;
 	private final KakaoService kakaoService;
 	private final NaverService naverService;
 	private final GoogleService googleService;
@@ -96,9 +98,17 @@ public class UserService {
 		user.setProfileImageUrl(profilePath);
 	}
 
+	// 비공개 공개 변화
 	public void setIsPublic(String email) {
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		user.setPrivate();
+	}
+
+	//회원 탈퇴
+	public void deleteUser(String email) {
+		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+		userRepository.delete(user);
+		userRefreshTokenRepository.deleteByUserEmail(email);
 	}
 
 }
