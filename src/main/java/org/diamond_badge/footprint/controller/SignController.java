@@ -71,7 +71,7 @@ public class SignController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@ApiParam(value = "서비스 제공자 provider", required = true, defaultValue = "kakao") @PathVariable String provider,
-		@ApiParam(value = "소셜 accessToken", required = true) @RequestParam String accessToken) {
+		@ApiParam(value = "소셜 accessToken", required = true) @RequestParam String accessToken) throws Exception {
 
 		User signedUser = null;
 
@@ -81,6 +81,9 @@ public class SignController {
 				break;
 			case "kakao":
 				signedUser = userService.signupByKakao(accessToken, provider);
+				break;
+			case "google":
+				signedUser= userService.signupByGoogle(accessToken, provider);
 				break;
 		}
 
