@@ -31,7 +31,7 @@ public class Statistics {
 	private int HAPPY;
 	private int SAD;
 	private int ANGRY;
-	private int DEPRESSE;
+	private int DEPRESSED;
 
 	//위치
 	private String first;
@@ -46,7 +46,7 @@ public class Statistics {
 	private User user;
 
 	public Statistics(User user) {
-		this.EXCITED = this.ANGRY = this.DEPRESSE = this.HAPPY = this.SAD = this.diaryCnt = this.locationCnt = 0;
+		this.EXCITED = this.ANGRY = this.DEPRESSED = this.HAPPY = this.SAD = this.diaryCnt = this.locationCnt = 0;
 		this.first = this.second = this.third = "측정중입니다.";
 		this.user = user;
 	}
@@ -54,6 +54,20 @@ public class Statistics {
 	public void setActive(int diaryCnt, int locationCnt) {
 		this.diaryCnt = diaryCnt;
 		this.locationCnt = locationCnt;
+	}
+
+	public void setEmotion(int EXCITED, int HAPPY, int SAD, int ANGRY, int DEPRESSED) {
+		this.EXCITED = EXCITED;
+		this.HAPPY = HAPPY;
+		this.ANGRY = ANGRY;
+		this.SAD = SAD;
+		this.DEPRESSED = DEPRESSED;
+	}
+
+	public void setLocation(String first, String second, String third) {
+		this.first = first;
+		this.second = second;
+		this.third = third;
 	}
 
 }

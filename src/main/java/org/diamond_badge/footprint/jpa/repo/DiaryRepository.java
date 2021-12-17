@@ -12,7 +12,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
 	@Query("select count(diarySeq) from Diary where userEmail=:userEmail and createdAt between :start and :end")
 	int getDiaryCountByCreatedAtBetweenAndUserEmail(LocalDateTime start, LocalDateTime end, String userEmail);
-
+	
 	Diary findDiaryByDiarySeq(Long diarySeq);
 
 	List<Diary> findByTimeLine(TimeLine timeLine);

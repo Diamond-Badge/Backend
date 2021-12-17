@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
 
+import org.diamond_badge.footprint.jpa.entity.EmotionType;
 import org.diamond_badge.footprint.jpa.entity.Statistics;
 import org.diamond_badge.footprint.jpa.entity.User;
 import org.diamond_badge.footprint.jpa.repo.DiaryRepository;
@@ -60,9 +61,28 @@ public class Scheduler {
 					endDatetime1,
 					user);
 
+				int HAPPY = timeLineRepository.getEmotionCountByCreatedAtBetweenAndUserAndEmotionType(startDatetime1,
+					endDatetime1, user,
+					EmotionType.HAPPY);
+				int EXCITED = timeLineRepository.getEmotionCountByCreatedAtBetweenAndUserAndEmotionType(startDatetime1,
+					endDatetime1, user,
+					EmotionType.EXCITED);
+				int ANGRY = timeLineRepository.getEmotionCountByCreatedAtBetweenAndUserAndEmotionType(startDatetime1,
+					endDatetime1, user,
+					EmotionType.ANGRY);
+				int SAD = timeLineRepository.getEmotionCountByCreatedAtBetweenAndUserAndEmotionType(startDatetime1,
+					endDatetime1, user,
+					EmotionType.SAD);
+				int DEPRESSED = timeLineRepository.getEmotionCountByCreatedAtBetweenAndUserAndEmotionType(startDatetime1,
+					endDatetime1, user,
+					EmotionType.DEPRESSED);
+
+				int total = HAPPY + EXCITED + ANGRY + SAD + DEPRESSED;
+
 				Statistics statistics = statisticsRepository.findByUser(user);
 				statistics.setActive(nextTimeLineCnt - agoTimeLineCnt, nextDiaryCnt - agoDiaryCnt);
-
+				statistics.setEmotion(EXCITED / total, HAPPY / total, SAD / total, ANGRY / total, DEPRESSED / total);
+				statisticsRepository.save(statistics);
 			}
 		);
 
