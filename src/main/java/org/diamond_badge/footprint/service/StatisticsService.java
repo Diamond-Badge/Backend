@@ -20,7 +20,7 @@ public class StatisticsService {
 
 	public Statistics getStatistics(String email) {
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-		return statisticsRepository.findByUser(user);
+		return statisticsRepository.findByUserEmail(email);
 	}
 
 }

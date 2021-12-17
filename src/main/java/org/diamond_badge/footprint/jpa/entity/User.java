@@ -12,9 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -84,10 +82,6 @@ public class User {
 	@OneToMany(mappedBy = "user")
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private List<TimeLine> timeLines = new ArrayList<>();
-
-	@OneToOne
-	@JoinColumn(name = "statisticsSeq")
-	private Statistics statistics;
 
 	public User(
 		@NotNull @Size(max = 100) String username,

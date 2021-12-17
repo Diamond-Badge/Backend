@@ -43,7 +43,7 @@ public class UserService {
 			User kakaoUser = new User(kakaoAccount.getEmail(), kakaoAccount.getEmail(),
 				null, ProviderType.KAKAO, RoleType.USER);
 			userRepository.save(kakaoUser);
-			Statistics statistics = new Statistics(kakaoUser);
+			Statistics statistics = new Statistics(kakaoAccount.getEmail());
 			statisticsRepository.save(statistics);
 
 			return kakaoUser;
@@ -64,7 +64,7 @@ public class UserService {
 				, ProviderType.NAVER, RoleType.USER);
 
 			userRepository.save(naverUser);
-			Statistics statistics = new Statistics(naverUser);
+			Statistics statistics = new Statistics(naverAccount.getId());
 			statisticsRepository.save(statistics);
 			return naverUser;
 		}
@@ -82,7 +82,7 @@ public class UserService {
 				, ProviderType.GOOGLE, RoleType.USER);
 
 			userRepository.save(googleUser);
-			Statistics statistics = new Statistics(googleUser);
+			Statistics statistics = new Statistics(googleProfile.getId());
 			statisticsRepository.save(statistics);
 			return googleUser;
 		}

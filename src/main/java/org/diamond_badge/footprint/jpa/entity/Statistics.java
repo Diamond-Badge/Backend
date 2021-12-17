@@ -6,7 +6,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -42,13 +41,12 @@ public class Statistics {
 	private int diaryCnt;
 	private int locationCnt;
 
-	@OneToOne(mappedBy = "statistics")
-	private User user;
+	private String userEmail;
 
-	public Statistics(User user) {
+	public Statistics(String userEmail) {
 		this.EXCITED = this.ANGRY = this.DEPRESSED = this.HAPPY = this.SAD = this.diaryCnt = this.locationCnt = 0;
 		this.first = this.second = this.third = "측정중입니다.";
-		this.user = user;
+		this.userEmail = userEmail;
 	}
 
 	public void setActive(int diaryCnt, int locationCnt) {

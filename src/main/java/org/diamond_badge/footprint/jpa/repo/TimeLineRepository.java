@@ -13,10 +13,11 @@ import org.springframework.data.jpa.repository.Query;
 public interface TimeLineRepository extends JpaRepository<TimeLine, Long> {
 
 	@Query("select count(timeLineSeq) from TimeLine where user=:user and createdAt between :start and :end")
-	int getTimeLineCountByCreatedAtBetweenAndUser(LocalDateTime start, LocalDateTime end, User user);
+	Optional<Integer> getTimeLineCountByCreatedAtBetweenAndUser(LocalDateTime start, LocalDateTime end, User user);
 
 	@Query("select count(timeLineSeq) from TimeLine where user=:user and emotionType=:emotionType and createdAt between :start and :end")
-	int getEmotionCountByCreatedAtBetweenAndUserAndEmotionType(LocalDateTime start, LocalDateTime end, User user,
+	Optional<Integer> getEmotionCountByCreatedAtBetweenAndUserAndEmotionType(LocalDateTime start, LocalDateTime end,
+		User user,
 		EmotionType emotionType);
 
 	Optional<TimeLine> findTimeLineByCreatedAtBetweenAndUser(LocalDateTime start, LocalDateTime end, User user);
