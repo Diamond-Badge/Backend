@@ -10,8 +10,10 @@ import org.diamond_badge.footprint.advice.exception.InvalidRefreshTokenException
 import org.diamond_badge.footprint.advice.exception.NotExpiredTokenYetException;
 import org.diamond_badge.footprint.config.security.JwtTokenProvider;
 import org.diamond_badge.footprint.jpa.entity.RoleType;
+import org.diamond_badge.footprint.jpa.entity.Statistics;
 import org.diamond_badge.footprint.jpa.entity.User;
 import org.diamond_badge.footprint.jpa.entity.UserRefreshToken;
+import org.diamond_badge.footprint.jpa.repo.StatisticsRepository;
 import org.diamond_badge.footprint.jpa.repo.UserRefreshTokenRepository;
 import org.diamond_badge.footprint.model.SingleResult;
 import org.diamond_badge.footprint.model.util.CookieUtil;
@@ -42,6 +44,7 @@ public class SignController {
 	private final ResponseService responseService;
 	private final UserService userService;
 	private final UserRefreshTokenRepository userRefreshTokenRepository;
+	private final StatisticsRepository statisticsRepository; // 운영자 테스트 배포단계 삭제 해야함
 
 	@ApiOperation(value = "운영자 로그인", notes = "운영자 계정을 통해 로그인한다.")
 	@PostMapping(value = "/signin")
@@ -49,6 +52,9 @@ public class SignController {
 		String id, String password, HttpServletRequest request,
 		HttpServletResponse response) throws Throwable {
 		String refreshToken = jwtTokenProvider.createRefreshToken(id, RoleType.ADMIN);
+
+		Statistics statistics = new Statistics(id);
+		statisticsRepository.save(statistics);
 
 		UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserEmail(id);
 		if (userRefreshToken == null) {
@@ -71,7 +77,7 @@ public class SignController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@ApiParam(value = "서비스 제공자 provider", required = true, defaultValue = "kakao") @PathVariable String provider,
-		@ApiParam(value = "소셜 accessToken", required = true) @RequestParam String accessToken) {
+		@ApiParam(value = "소셜 accessToken", required = true) @RequestParam String accessToken) throws Exception {
 
 		User signedUser = null;
 
@@ -81,6 +87,9 @@ public class SignController {
 				break;
 			case "kakao":
 				signedUser = userService.signupByKakao(accessToken, provider);
+				break;
+			case "google":
+				signedUser = userService.signupByGoogle(accessToken, provider);
 				break;
 		}
 

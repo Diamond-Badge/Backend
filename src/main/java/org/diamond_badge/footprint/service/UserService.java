@@ -5,7 +5,9 @@ import java.util.Optional;
 import org.diamond_badge.footprint.advice.exception.UserNotFoundException;
 import org.diamond_badge.footprint.jpa.entity.ProviderType;
 import org.diamond_badge.footprint.jpa.entity.RoleType;
+import org.diamond_badge.footprint.jpa.entity.Statistics;
 import org.diamond_badge.footprint.jpa.entity.User;
+import org.diamond_badge.footprint.jpa.repo.StatisticsRepository;
 import org.diamond_badge.footprint.jpa.repo.UserRefreshTokenRepository;
 import org.diamond_badge.footprint.jpa.repo.UserRepository;
 import org.diamond_badge.footprint.model.social.GoogleProfile;
@@ -22,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final StatisticsRepository statisticsRepository;
 	private final UserRefreshTokenRepository userRefreshTokenRepository;
 	private final KakaoService kakaoService;
 	private final NaverService naverService;
@@ -39,8 +42,11 @@ public class UserService {
 			System.out.println(kakaoAccount.getNickname() + " " + kakaoAccount.getEmail());
 			User kakaoUser = new User(kakaoAccount.getEmail(), kakaoAccount.getEmail(),
 				null, ProviderType.KAKAO, RoleType.USER);
+			userRepository.save(kakaoUser);
+			Statistics statistics = new Statistics(kakaoAccount.getEmail());
+			statisticsRepository.save(statistics);
 
-			return userRepository.save(kakaoUser);
+			return kakaoUser;
 		}
 	}
 
@@ -58,7 +64,8 @@ public class UserService {
 				, ProviderType.NAVER, RoleType.USER);
 
 			userRepository.save(naverUser);
-
+			Statistics statistics = new Statistics(naverAccount.getId());
+			statisticsRepository.save(statistics);
 			return naverUser;
 		}
 	}
@@ -71,13 +78,13 @@ public class UserService {
 		if (user.isPresent()) {
 			return user.get();
 		} else {
+			User googleUser = new User(googleProfile.getId(), googleProfile.getEmail(), null
+				, ProviderType.GOOGLE, RoleType.USER);
 
-			User naverUser = new User(googleProfile.getId(), googleProfile.getEmail(), null
-				, ProviderType.NAVER, RoleType.USER);
-
-			userRepository.save(naverUser);
-
-			return naverUser;
+			userRepository.save(googleUser);
+			Statistics statistics = new Statistics(googleProfile.getId());
+			statisticsRepository.save(statistics);
+			return googleUser;
 		}
 	}
 

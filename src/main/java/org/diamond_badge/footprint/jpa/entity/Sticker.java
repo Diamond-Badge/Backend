@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -52,7 +54,9 @@ public class Sticker {
 	@NotNull
 	@LastModifiedDate
 	private LocalDateTime modifiedAt;
-
+	@Column(name = "STICKER_TYPE")
+	@Enumerated(EnumType.STRING)
+	@NotNull
 	private StickerType stickerType;
 
 	@ManyToOne
